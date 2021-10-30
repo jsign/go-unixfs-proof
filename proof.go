@@ -56,10 +56,10 @@ func ValidateProof(ctx context.Context, root cid.Cid, offset uint64, proof []byt
 	// is missing.
 	regenProof, err := CreateProof(ctx, root, offset, dserv)
 	if err != nil {
-		return false, fmt.Errorf("regenerating proof to validate: %s", err)
+		return false, nil
 	}
 
-	return !bytes.Equal(proof, regenProof), nil
+	return bytes.Equal(proof, regenProof), nil
 }
 
 // CreateProof creates a proof for a Cid at a specified file offset.
@@ -80,6 +80,7 @@ func CreateProof(ctx context.Context, root cid.Cid, offset uint64, dserv ipld.DA
 			}
 			proofNodes = append(proofNodes, cn)
 
+			// REMOVE THIS?
 			if next == nil {
 				fsNode, err := unixfs.ExtractFSNode(n)
 				if err != nil {
