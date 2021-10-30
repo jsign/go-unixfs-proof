@@ -80,6 +80,8 @@ The following bullets will probably be implemented soon:
 - [ ] CLI for validation from DealID in Filecoin network; maybe fun, but `Labels` are unverified.
 - [ ] Many border-case tests.
 
+This is a side-project made for fun, so a priori is a hand-wavy roadmap.
+
 ## Contributing
 
 Contributions make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
