@@ -25,7 +25,10 @@ The proof is a sub-DAG of the original, which contains the path to the targeted 
 
 Consider the following UnixFS DAG file with a fanout factor of 3:
 ![image](https://user-images.githubusercontent.com/6136245/139512869-5135649f-dc34-4ef1-9862-5c47860ec581.png)
-([excalidraw link](https://excalidraw.com/#json=5662906028916736,qzS2x9JgfY30Vy2tbzWwiA)
+<!---
+(https://excalidraw.com/#json=5662906028916736,qzS2x9JgfY30Vy2tbzWwiA)
+-->
+
 
 Considering a verifer is asking a prover to provide a proof that it contains the corresponding block at the _file level offset_ X, the prover generates the subdag inside the green zone:
 - RoundIndigo nodes are internal DAG nodes that are somewhat small-ish and don't contain file data.
