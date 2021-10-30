@@ -21,7 +21,6 @@ import (
 )
 
 func ValidateProof(ctx context.Context, root cid.Cid, offset uint64, proof []byte) (bool, error) {
-	fmt.Printf("Validating %s\n", root)
 	r := bufio.NewReader(bytes.NewReader(proof))
 
 	bstore := blockstore.NewBlockstore(dssync.MutexWrap(datastore.NewMapDatastore()))
@@ -66,7 +65,6 @@ func CreateProof(ctx context.Context, root cid.Cid, offset uint64, dserv ipld.DA
 
 	var currOffset, layer uint64
 	for n != nil {
-		fmt.Printf("In layer %d, numLinks=%d\n", layer, len(n.Links()))
 		var next ipld.Node
 		for _, child := range n.Links() {
 			cn, err := child.GetNode(ctx, dserv)
@@ -75,7 +73,6 @@ func CreateProof(ctx context.Context, root cid.Cid, offset uint64, dserv ipld.DA
 			}
 			list = append(list, cn)
 
-			fmt.Printf("\t%s currOffset=%d\n", child.Cid, currOffset)
 			if next == nil {
 				fsNode, err := unixfs.ExtractFSNode(n)
 				if err != nil {
@@ -83,6 +80,7 @@ func CreateProof(ctx context.Context, root cid.Cid, offset uint64, dserv ipld.DA
 				}
 				if currOffset+fsNode.FileSize() >= offset {
 					next = cn
+					break
 				} else {
 					currOffset += fsNode.FileSize()
 				}
