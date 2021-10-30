@@ -20,6 +20,8 @@ import (
 	"github.com/ipld/go-car/util"
 )
 
+// ValidateProof validates a proof for a Cid at a specified offset. If the proof is valid, the return
+// parameter is true. If the proof is invalid false is returned. In any other case an error is returned.
 func ValidateProof(ctx context.Context, root cid.Cid, offset uint64, proof []byte) (bool, error) {
 	r := bufio.NewReader(bytes.NewReader(proof))
 
@@ -35,6 +37,9 @@ func ValidateProof(ctx context.Context, root cid.Cid, offset uint64, proof []byt
 		return false, fmt.Errorf("the root isn't the expected one")
 	}
 
+	// TODO(jsign): if we assume some ordering in the CAR file we could simply have a CAR-serial walker
+	//              which would make this much faster and probably simpler in a way avoiding blockstores, etc.
+	//              For now, not have those assumptions and do a naive-ish walk.
 	for {
 		block, err := cr.Next()
 		if err == io.EOF {
@@ -45,33 +50,35 @@ func ValidateProof(ctx context.Context, root cid.Cid, offset uint64, proof []byt
 		}
 	}
 	dserv := dag.NewDAGService(bsrv.New(bstore, offline.Exchange(bstore)))
+
+	// Smart (or lazy?) way to verify the proof. If we assume an ideal full DAGStore, trying to
+	// re-create the proof with the proof as the underlying blockstore should fail if something
+	// is missing.
 	regenProof, err := CreateProof(ctx, root, offset, dserv)
 	if err != nil {
 		return false, fmt.Errorf("regenerating proof to validate: %s", err)
 	}
-	if !bytes.Equal(proof, regenProof) {
-		return false, fmt.Errorf("proof is invalid")
-	}
 
-	return true, nil
+	return !bytes.Equal(proof, regenProof), nil
 }
 
+// CreateProof creates a proof for a Cid at a specified file offset.
 func CreateProof(ctx context.Context, root cid.Cid, offset uint64, dserv ipld.DAGService) ([]byte, error) {
 	n, err := dserv.Get(ctx, root)
 	if err != nil {
 		return nil, fmt.Errorf("get %s from dag service: %s", root, err)
 	}
-	list := []ipld.Node{n}
+	proofNodes := []ipld.Node{n}
 
-	var currOffset, layer uint64
+	var currOffset uint64
 	for n != nil {
 		var next ipld.Node
 		for _, child := range n.Links() {
 			cn, err := child.GetNode(ctx, dserv)
 			if err != nil {
-				return nil, fmt.Errorf("get child from layer %d: %s", layer, err)
+				return nil, fmt.Errorf("get child %s: %s", child.Cid, err)
 			}
-			list = append(list, cn)
+			proofNodes = append(proofNodes, cn)
 
 			if next == nil {
 				fsNode, err := unixfs.ExtractFSNode(n)
@@ -86,7 +93,6 @@ func CreateProof(ctx context.Context, root cid.Cid, offset uint64, dserv ipld.DA
 				}
 			}
 		}
-		layer++
 		n = next
 	}
 
@@ -99,8 +105,8 @@ func CreateProof(ctx context.Context, root cid.Cid, offset uint64, dserv ipld.DA
 		return nil, fmt.Errorf("writing car header: %s", err)
 	}
 	seen := cid.NewSet()
-	for i := 0; i < len(list); i++ {
-		n := list[i]
+	for i := 0; i < len(proofNodes); i++ {
+		n := proofNodes[i]
 		if !seen.Visit(n.Cid()) {
 			continue
 		}

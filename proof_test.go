@@ -20,6 +20,8 @@ func TestMakeProof(t *testing.T) {
 	r := rand.New(rand.NewSource(22))
 	data := make([]byte, 100000)
 	_, err := io.ReadFull(r, data)
+	require.NoError(t, err)
+
 	in := bytes.NewReader(data)
 	opts := testu.UseCidV1
 	dbp := h.DagBuilderParams{
@@ -30,13 +32,9 @@ func TestMakeProof(t *testing.T) {
 	}
 
 	db, err := dbp.New(chunker.NewSizeSplitter(in, 256))
-	if err != nil {
-		t.Fatal(err)
-	}
+	require.NoError(t, err)
 	node, err := balanced.Layout(db)
-	if err != nil {
-		t.Fatal(err)
-	}
+	require.NoError(t, err)
 
 	offset := uint64(50000)
 	ctx, cls := context.WithCancel(context.Background())
