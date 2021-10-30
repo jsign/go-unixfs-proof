@@ -23,6 +23,16 @@ The challenger knows the _Cid_ of a UnixFS DAG and the maximum size of the under
 
 The proof is a sub-DAG of the original, which contains the path to the targeted block, plus each level of intermediate nodes.
 
+Consider the following UnixFS DAG file with a fanout factor of 3:
+![image](https://user-images.githubusercontent.com/6136245/139512869-5135649f-dc34-4ef1-9862-5c47860ec581.png)
+([excalidraw link](https://excalidraw.com/#json=5662906028916736,qzS2x9JgfY30Vy2tbzWwiA)
+
+Considering a verifer is asking a prover to provide a proof that it contains the corresponding block at the _file level offset_ X, the prover generates the subdag inside the green zone:
+- RoundIndigo nodes are internal DAG nodes that are somewhat small-ish and don't contain file data.
+- Square blocks are leaves that contain part of the original file data.
+- The indigo colored nodes are necessary nodes to make the proof verify that the target block (red) is at the specified offset.
+
+
 ## Assumptions of the UnixFS DAG file
 This library works with any file UnixFS DAG. It doesn't assume any particular layout (e.g., balanced, trickle, etc.), chunking (e.g., fixed size, etc.), or other particular DAG builder configuration.
 
