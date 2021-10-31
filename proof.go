@@ -37,9 +37,9 @@ func ValidateProof(ctx context.Context, root cid.Cid, offset uint64, proof []byt
 		return false, fmt.Errorf("the root isn't the expected one")
 	}
 
-	// TODO(jsign): if we assume some ordering in the CAR file we could simply have a CAR-serial walker
-	//              which would make this much faster and probably simpler in a way avoiding blockstores, etc.
-	//              For now, not have those assumptions and do a naive-ish walk.
+	// TODO: if we assume some ordering in the CAR file we could simply have a CAR-serial walker
+	//       which would make this much faster and probably simpler in a way avoiding blockstores, etc.
+	//       For now, not have those assumptions and do a naive-ish walk.
 	for {
 		block, err := cr.Next()
 		if err == io.EOF {
@@ -68,6 +68,14 @@ func CreateProof(ctx context.Context, root cid.Cid, offset uint64, dserv ipld.DA
 	if err != nil {
 		return nil, fmt.Errorf("get %s from dag service: %s", root, err)
 	}
+	fsRoot, err := unixfs.ExtractFSNode(n)
+	if err != nil {
+		return nil, fmt.Errorf("extracting fsnode from merkle-dag: %s", err)
+	}
+	if fsRoot.FileSize() < offset {
+		return nil, fmt.Errorf("the offset is greater than the file size")
+	}
+
 	proofNodes := []ipld.Node{n}
 
 	var currOffset uint64

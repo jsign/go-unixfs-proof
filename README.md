@@ -31,8 +31,8 @@ Consider the following UnixFS DAG file with a fanout factor of 3:
 
 
 Considering a verifer is asking a prover to provide a proof that it contains the corresponding block at the _file level offset_ X, the prover generates the subdag inside the green zone:
-- RoundIndigo nodes are internal DAG nodes that are somewhat small-ish and don't contain file data.
-- Square blocks are leaves that contain part of the original file data.
+- Roundo nodes are internal DAG nodes that are somewhat small-ish and don't contain file data.
+- Square nodes contain chunks of the original file data.
 - The indigo colored nodes are necessary nodes to make the proof verify that the target block (red) is at the specified offset.
 
 
@@ -67,7 +67,7 @@ Notice that if the prover has missing internal nodes of the UnixFS, then the imp
 
 
 ## Proof sizes and benchmark
-The size of the proof should be already close to the minimal level. Notice that these proofs are pretty big for the single reason that no assumptions are made of DAG layout nor chunking. Thus internal nodes at visited levels include many children. If the fan-out factor at each level is the default-ish ones, this involves a non-negligible number of blocks, which are unavoidable to allow having these minimal assumptions.
+The size of the proof should be already close to the minimal level. Notice that these proofs are pretty big for the single reason that no assumptions are made of DAG layout nor chunking. Thus internal nodes at visited levels include many children. If we're able to have some extra assumptions as fixed-size chunking, then we could potentially ignore untargeted raw leaves which are the biggest in size, and only include the targeted (red) leaf node.
 
 Generating and verifying proofs are mostly symmetrical operations. The current implementation is very naive and not optimized in any way. Being stricter with the spec CAR serialization block order can make the implementation faster. Probably, not a big deal unless you're generating proofs for thousands of _Cids_.
 
@@ -78,7 +78,7 @@ The following bullets will probably be implemented soon:
 - [ ] CLI command wirable to `go-ipfs`. The lib already supports any `DAGService` so anything can be pluggable.
 - [ ] Allow strict mode proof validation; maybe it makes sense to fail faster in some cases, nbd.
 - [ ] CLI for validation from DealID in Filecoin network; maybe fun, but `Labels` are unverified.
-- [ ] Many border-case tests.
+- [ ] godocs
 
 This is a side-project made for fun, so a priori is a hand-wavy roadmap.
 
