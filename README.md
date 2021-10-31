@@ -10,6 +10,7 @@ Go implementation of offset-based native UnixFS proofs.
 - [Proof format](#proof-format)
 - [Use-case analysis and security](#use-case-analysis-and-security)
 - [Proof sizes and benchmark](#proof-sizes-and-benchmark)
+- [CLI](#cli)
 - [Roadmap](#roadmap)
 - [Contributing](#contributing)
 - [License](#license)
@@ -31,7 +32,7 @@ Consider the following UnixFS DAG file with a fanout factor of 3:
 
 
 Considering a verifer is asking a prover to provide a proof that it contains the corresponding block at the _file level offset_ X, the prover generates the subdag inside the green zone:
-- Roundo nodes are internal DAG nodes that are somewhat small-ish and don't contain file data.
+- Round nodes are internal DAG nodes that are somewhat small-ish and don't contain file data.
 - Square nodes contain chunks of the original file data.
 - The indigo colored nodes are necessary nodes to make the proof verify that the target block (red) is at the specified offset.
 
@@ -67,15 +68,37 @@ Notice that if the prover has missing internal nodes of the UnixFS, then the imp
 
 
 ## Proof sizes and benchmark
-The size of the proof should be already close to the minimal level. Notice that these proofs are pretty big for the single reason that no assumptions are made of DAG layout nor chunking. Thus internal nodes at visited levels include many children. If we're able to have some extra assumptions as fixed-size chunking, then we could potentially ignore untargeted raw leaves which are the biggest in size, and only include the targeted (red) leaf node.
+The size of the proof should be already close to the minimal level. Notice that these proofs are pretty big for the single reason that no assumptions are made of DAG layout nor chunking. Thus internal nodes at visited levels include many children. If we're able to have some extra assumptions as fixed-size chunking, then we could potentially ignore untargeted raw leaves which are the biggest in size, and only include the targeted (red) leaf node. For this reason, a proof for an offset could serve for all the left-sided blocks sharing the same parent (**).
 
 Generating and verifying proofs are mostly symmetrical operations. The current implementation is very naive and not optimized in any way. Being stricter with the spec CAR serialization block order can make the implementation faster. Probably, not a big deal unless you're generating proofs for thousands of _Cids_.
+
+## CLI
+A simple CLI `ufsproof` is provided which allows to easily generate and verify proofs, which can be installed running `make install`.
+
+To generate proofs, run `ufsproof prove [cid] [offset]` which prints in stdout the proof for block of Cid at the provided offset.
+For example:
+- `ufsproof prove QmUavJLgtkQy6wW2j1J1A5cAP6UQt3XLQjsArsU2ZYmgSo 1300`: assumes that the Cid is stored in an IPFS API at `/ip4/127.0.0.1/tcp/5001`.
+- `ufsproof prove QmUavJLgtkQy6wW2j1J1A5cAP6UQt3XLQjsArsU2ZYmgSo 1300 > proof.car`: stores the proof in a file.
+- `ufsproof prove --car-file mydag.car QmUavJLgtkQy6wW2j1J1A5cAP6UQt3XLQjsArsU2ZYmgSo 1300`: uses a CAR file instead of an IPFS API.
+
+To verify proofs, run `ufsproof verify [cid] [offset] [proof-path:(optional, by default stdin)]`.
+For example:
+- `ufsproof verify QmUavJLgtkQy6wW2j1J1A5cAP6UQt3XLQjsArsU2ZYmgSo 1300 proof.car`
+
+
+Closing the loop:
+```
+$ ufsproof prove QmUavJLgtkQy6wW2j1J1A5cAP6UQt3XLQjsArsU2ZYmgSo 1300 | ufsproof verify QmUavJLgtkQy6wW2j1J1A5cAP6UQt3XLQjsArsU2ZYmgSo 1300
+The proof is valid
+$ ufsproof prove QmUavJLgtkQy6wW2j1J1A5cAP6UQt3XLQjsArsU2ZYmgSo 10 | ufsproof verify QmUavJLgtkQy6wW2j1J1A5cAP6UQt3XLQjsArsU2ZYmgSo 50000000
+The proof is NOT valid
+```
+Remember that because of (**) mentioned in _Proof sizes and benchmark_ is possible to have a valid proof message on some offsets greater than the proved one.
 
 ## Roadmap
 The following bullets will probably be implemented soon:
 - [ ] Allow direct leaf Cid proof (non-offset based); a bit offtopic for this lib and not sure entirely useful.
 - [ ] Benchmarks, may be fun but nothing entirely useful for now.
-- [ ] CLI command wirable to `go-ipfs`. The lib already supports any `DAGService` so anything can be pluggable.
 - [ ] Allow strict mode proof validation; maybe it makes sense to fail faster in some cases, nbd.
 - [ ] CLI for validation from DealID in Filecoin network; maybe fun, but `Labels` are unverified.
 - [ ] godocs
