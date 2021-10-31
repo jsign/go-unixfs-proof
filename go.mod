@@ -5,7 +5,7 @@ go 1.17
 require (
 	github.com/ipfs/go-blockservice v0.1.0
 	github.com/ipfs/go-cid v0.0.8-0.20210716091050-de6c03deae1c
-	github.com/ipfs/go-datastore v0.4.2
+	github.com/ipfs/go-datastore v0.5.0
 	github.com/ipfs/go-ipfs-blockstore v1.0.3
 	github.com/ipfs/go-ipfs-chunker v0.0.1
 	github.com/ipfs/go-ipfs-exchange-offline v0.0.1
@@ -36,7 +36,7 @@ require (
 	github.com/ipfs/go-verifcid v0.0.1 // indirect
 	github.com/ipld/go-codec-dagpb v1.2.0 // indirect
 	github.com/ipld/go-ipld-prime v0.12.3 // indirect
-	github.com/jbenet/goprocess v0.1.3 // indirect
+	github.com/jbenet/goprocess v0.1.4 // indirect
 	github.com/klauspost/cpuid/v2 v2.0.8 // indirect
 	github.com/libp2p/go-buffer-pool v0.0.2 // indirect
 	github.com/minio/blake2b-simd v0.0.0-20160723061019-3f5f724cb5b1 // indirect
