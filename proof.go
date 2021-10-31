@@ -20,9 +20,9 @@ import (
 	"github.com/ipld/go-car/util"
 )
 
-// ValidateProof validates a proof for a Cid at a specified offset. If the proof is valid, the return
+// Verify validates a proof for a Cid at a specified offset. If the proof is valid, the return
 // parameter is true. If the proof is invalid false is returned. In any other case an error is returned.
-func ValidateProof(ctx context.Context, root cid.Cid, offset uint64, proof []byte) (bool, error) {
+func Verify(ctx context.Context, root cid.Cid, offset uint64, proof []byte) (bool, error) {
 	r := bufio.NewReader(bytes.NewReader(proof))
 
 	bstore := blockstore.NewBlockstore(dssync.MutexWrap(datastore.NewMapDatastore()))
@@ -54,7 +54,7 @@ func ValidateProof(ctx context.Context, root cid.Cid, offset uint64, proof []byt
 	// Smart (or lazy?) way to verify the proof. If we assume an ideal full DAGStore, trying to
 	// re-create the proof with the proof as the underlying blockstore should fail if something
 	// is missing.
-	regenProof, err := CreateProof(ctx, root, offset, dserv)
+	regenProof, err := Prove(ctx, root, offset, dserv)
 	if err != nil {
 		return false, nil
 	}
@@ -62,8 +62,8 @@ func ValidateProof(ctx context.Context, root cid.Cid, offset uint64, proof []byt
 	return bytes.Equal(proof, regenProof), nil
 }
 
-// CreateProof creates a proof for a Cid at a specified file offset.
-func CreateProof(ctx context.Context, root cid.Cid, offset uint64, dserv ipld.DAGService) ([]byte, error) {
+// Prove creates a proof for a Cid at a specified file offset.
+func Prove(ctx context.Context, root cid.Cid, offset uint64, dserv ipld.DAGService) ([]byte, error) {
 	n, err := dserv.Get(ctx, root)
 	if err != nil {
 		return nil, fmt.Errorf("get %s from dag service: %s", root, err)

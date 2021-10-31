@@ -61,14 +61,14 @@ func TestProofVerify(t *testing.T) {
 		t.Run(tname, func(t *testing.T) {
 			t.Parallel()
 
-			proof, err := CreateProof(ctx, rootCid, test.proofOffset, dserv)
+			proof, err := Prove(ctx, rootCid, test.proofOffset, dserv)
 			if test.notOkProof {
 				require.Error(t, err)
 				return
 			}
 			require.NoError(t, err)
 
-			ok, err := ValidateProof(ctx, rootCid, test.verifOffset, proof)
+			ok, err := Verify(ctx, rootCid, test.verifOffset, proof)
 			require.NoError(t, err)
 			require.Equal(t, !test.notOkVerif, ok)
 		})

@@ -63,7 +63,7 @@ Only one of these options should be provided.
 			log.Fatalf("wiring dagservice: %s", err)
 		}
 
-		proof, err := unixfsproof.CreateProof(c.Context(), rootCid, offset, dserv)
+		proof, err := unixfsproof.Prove(c.Context(), rootCid, offset, dserv)
 		if err != nil {
 			log.Fatalf("generating proof: %s", err)
 		}
@@ -101,7 +101,7 @@ var verifyProofCmd = &cobra.Command{
 			log.Fatalf("reading proof file: %s", err)
 		}
 
-		ok, err := unixfsproof.ValidateProof(c.Context(), rootCid, offset, proof)
+		ok, err := unixfsproof.Verify(c.Context(), rootCid, offset, proof)
 		if err != nil {
 			log.Fatalf("verifying proof: %s", err)
 		}
