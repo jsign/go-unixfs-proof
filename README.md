@@ -115,7 +115,7 @@ Possible ideas in the near future:
 - [ ] Benchmarks, may be fun but nothing entirely useful for now.
 - [ ] Allow strict mode proof validation; maybe it makes sense to fail faster in some cases, nbd.
 - [ ] CLI for validation from DealID in Filecoin network; maybe fun, but `Labels` are unverified.
-- Baking assumptions for shorter proofs.
+- [ ] Baking assumptions for shorter proofs.
 - [ ] godocs
 
 This is a side-project made for fun, so a priori is a hand-wavy roadmap.
