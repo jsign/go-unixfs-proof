@@ -5,8 +5,8 @@ Go implementation of offset-based native UnixFS proofs.
 **Note:** this is a side-project and not be considered production-ready. It isn't optimized nor audited in any way. 
 
 ## Table of contents
-- [About the project](#about)
-- [Assumptions of the UnixFS DAG file](#Assumptions-of-the-UnixFS-DAG-file)
+- [About the project](#about-the-project)
+- [Does this library assume any particular setup of the UnixFS DAG for the file?](#does-this-library-assume-any-particular-setup-of-the-UnixFS-DAG-for-the-file)
 - [Proof format](#proof-format)
 - [Use-case analysis and security](#use-case-analysis-and-security)
 - [Proof sizes and benchmark](#proof-sizes-and-benchmark)
@@ -17,7 +17,7 @@ Go implementation of offset-based native UnixFS proofs.
 - [Contact](#contact)
 
 
-## About
+## About the project
 This library allows generating and verification proofs for UnixFS file DAGs.
 
 The verifier knows the _Cid_ of a UnixFS DAG and the size of the underlying represented file. 
