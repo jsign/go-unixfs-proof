@@ -50,6 +50,9 @@ The DAG can have different layouts (e.g., balanced, trickle, etc.), chunking (e.
 This minimum level of assumptions allows the challenger to only needed to know the _Cid_ and file size to ask and verify the proof.
 There's an inherent tradeoff between assumptions and possible optimizations of the proof. See _Proof size and benchmark_ section.
 
+It is important to note that the UnixFS internal nodes should be _well formed_ in the sense that the _FileSize_ values for the protobufs should be correctly populated.
+Also, as mentioned in the library description, the Cid of the root should be a UnixFS file, and not other type (e.g: directory). Supporting directories should be doable if some extra walking is accepted.
+
 ## Proof format
 To avoid inventing any new proof standard or format, the proof is a byte array corresponding to a CAR file format of all the blocks that are part of the proof.
 The decision was mainly to avoid friction about defining a new format or standard. 
@@ -117,6 +120,7 @@ Possible ideas in the near future:
 - [ ] CLI for validation from DealID in Filecoin network; maybe fun, but `Labels` are unverified.
 - [ ] Baking assumptions for shorter proofs.
 - [ ] godocs
+- [ ] Accept directory roots.
 
 This is a side-project made for fun, so a priori is a hand-wavy roadmap.
 
