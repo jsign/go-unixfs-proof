@@ -5,11 +5,11 @@ go 1.17
 require (
 	github.com/ipfs/go-blockservice v0.1.2
 	github.com/ipfs/go-cid v0.0.8-0.20210716091050-de6c03deae1c
-	github.com/ipfs/go-datastore v0.4.2
-	github.com/ipfs/go-ipfs-blockstore v1.0.4
+	github.com/ipfs/go-datastore v0.5.0
+	github.com/ipfs/go-ipfs-blockstore v1.2.0
 	github.com/ipfs/go-ipfs-chunker v0.0.5
 	github.com/ipfs/go-ipfs-exchange-offline v0.0.1
-	github.com/ipfs/go-ipld-format v0.2.0
+	github.com/ipfs/go-ipld-format v0.3.0
 	github.com/ipfs/go-merkledag v0.3.2
 	github.com/ipfs/go-unixfs v0.2.6
 	github.com/ipld/go-car v0.3.2
@@ -23,7 +23,7 @@ require (
 	github.com/hashicorp/golang-lru v0.5.4 // indirect
 	github.com/ipfs/bbloom v0.0.4 // indirect
 	github.com/ipfs/go-block-format v0.0.3 // indirect
-	github.com/ipfs/go-ipfs-ds-help v1.0.0 // indirect
+	github.com/ipfs/go-ipfs-ds-help v1.1.0 // indirect
 	github.com/ipfs/go-ipfs-exchange-interface v0.0.1 // indirect
 	github.com/ipfs/go-ipfs-files v0.0.3 // indirect
 	github.com/ipfs/go-ipfs-posinfo v0.0.1 // indirect
